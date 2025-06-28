@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+
+name: Changed Images
+description: Select images that were updated in PR
+
+outputs:
+  changed-images:
+    description: List of changed images
+    value: ${{ steps.changed-files.outputs.all_changed_files }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@11bd719
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@ed68ef8
+      with:
+        diff_relative: "true"
+        path: images
+        files: "**"
+        dir_names: true
+        matrix: true
+    - name: List all changed files
+      shell: bash
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      run: |
+        for file in ${ALL_CHANGED_FILES}; do
+          echo "$file was changed"
+        done

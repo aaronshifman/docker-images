@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - images/**
+  workflow_dispatch: # TODO: just auto rerun, don't bother with this
+    inputs:
+      image:
+        type: string
+        description: Application Name
+        required: true
+      release:
+        type: boolean
+        description: Release
+        required: false
+        default: false
+
+jobs:
+  setup:
+    name: setup
+    runs-on: ubuntu-latest
+    outputs:
+      changed-files: ${{ steps.changed-files.outputs.changed-images }}
+    steps:
+      - uses: actions/checkout@11bd719
+
+      - uses: ./.github/actions/changed-images
+        id: changed-files
+
+  merge-changed-files:
+    if: ${{ needs.setup.outputs.changed-files != '[]' || github.event_name == 'workflow_dispatch' }}
+    name: Get Changed Images
+    needs:
+      - setup
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.images.outputs.images }}
+    steps:
+      - name: Get changed images
+        uses: actions/github-script@60a0d83
+        id: images
+        env:
+          IMAGES: ${{ github.event_name == 'workflow_dispatch' && inputs.image || join(fromJSON(needs.setup.outputs.changed-files), ' ') }}
+        with:
+          script: |
+            const { IMAGES } = process.env;
+            const imagesToBuild = IMAGES.split(' ').filter(Boolean);
+            core.setOutput('images', JSON.stringify(imagesToBuild));
+            console.log('image:', JSON.stringify(imagesToBuild, null, 2));
+            core.summary.addHeading('Images to build:').addList(imagesToBuild).write();
+
+  build:
+    if: ${{ needs.merge-changed-files.outputs.images != '[]' }}
+    name: Build ${{ matrix.image }}
+    needs:
+      - merge-changed-files
+    uses: ./.github/workflows/build.yaml
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+      packages: write
+      security-events: write
+    secrets: inherit
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.merge-changed-files.outputs.images) }}
+    with:
+      image: ${{ matrix.image }}
+      release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}

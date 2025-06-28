@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Pull Request Trigger
+
+on:
+  merge_group:
+  pull_request:
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      changed-files: ${{ steps.changed-files.outputs.changed-images }}
+    steps:
+      - uses: actions/checkout@11bd719
+      - uses: ./.github/actions/changed-images
+        id: changed-files
+
+  build:
+    if: ${{ needs.setup.outputs.changed-files != '[]' }}
+    name: Build ${{ matrix.image }}
+    needs:
+      - setup
+    uses: ./.github/workflows/build.yaml
+    permissions:
+      contents: read
+      packages: read
+    secrets: inherit
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.setup.outputs.changed-files) }}
+    with:
+      image: ${{ matrix.image }}
+      release: false # TODO: release pr-tagged images
