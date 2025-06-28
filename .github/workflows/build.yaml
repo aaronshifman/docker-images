@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@09d2acae674a48949e3602304ab46fd20ae0c42f
 
       - name: Get image settings
         id: image-settings
@@ -80,7 +80,7 @@ jobs:
     runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@09d2acae674a48949e3602304ab46fd20ae0c42f
 
       - name: Set architecture for cache
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
@@ -154,7 +154,7 @@ jobs:
       digest: ${{ steps.digest.outputs.digest }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@09d2acae674a48949e3602304ab46fd20ae0c42f
 
       - name: Download Bake Metadata
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
