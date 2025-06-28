@@ -26,7 +26,7 @@ jobs:
     outputs:
       changed-files: ${{ steps.changed-files.outputs.changed-images }}
     steps:
-      - uses: actions/checkout@11bd719
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - uses: ./.github/actions/changed-images
         id: changed-files
@@ -41,7 +41,7 @@ jobs:
       images: ${{ steps.images.outputs.images }}
     steps:
       - name: Get changed images
-        uses: actions/github-script@60a0d83
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
         id: images
         env:
           IMAGES: ${{ github.event_name == 'workflow_dispatch' && inputs.image || join(fromJSON(needs.setup.outputs.changed-files), ' ') }}

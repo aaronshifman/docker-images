@@ -12,7 +12,7 @@ jobs:
     outputs:
       changed-files: ${{ steps.changed-files.outputs.changed-images }}
     steps:
-      - uses: actions/checkout@11bd719
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: ./.github/actions/changed-images
         id: changed-files
 
