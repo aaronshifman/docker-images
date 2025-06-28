@@ -63,7 +63,7 @@ jobs:
             org.opencontainers.image.description=${{ steps.image-settings.outputs.description }}
 
       - name: Store metadata
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
         with:
           if-no-files-found: error
           name: ${{ inputs.image }}-metadata
@@ -137,7 +137,7 @@ jobs:
 
       - name: Upload Digest
         if: ${{ inputs.release }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
         with:
           name: ${{ inputs.image }}-digests-${{ steps.target.outputs.arch }}
           path: ${{ runner.temp }}/digests/*
