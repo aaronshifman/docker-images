@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+
+name: Image Settings
+description: Grab fields from docker bake file to populate image settings
+inputs:
+  image:
+    description: Image name (path in repo)
+    required: true
+outputs:
+  description:
+    description: Image description (.target.image.platforms)
+    value: ${{ steps.settings.outputs.description }}
+  platforms:
+    description: Platform to build for (.target.image.platforms)
+    value: ${{ steps.settings.outputs.platforms }}
+  version:
+    description: VERSION from docker bake
+    value: ${{ steps.settings.outputs.version }}
+runs:
+  using: composite
+  steps:
+    - name: Docker Bake Settings
+      id: settings
+      shell: bash
+      working-directory: images/${{ inputs.image }}
+      run: |
+        PLATFORMS=$(docker buildx bake image --print | jq -cr .target.image.platforms)
+        DESCRIPTION=$(docker buildx bake image --print | jq -cr '.target.image.labels."org.opencontainers.image.description"')
+        VERSION=$(docker buildx bake --list type=variables,format=json | jq -cr '.[] | select(.name == "VERSION") | .value')
+
+        # Write fields to GITHUB_OUTPUT (core.setOutput)
+        echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "description=${DESCRIPTION}" >> $GITHUB_OUTPUT
