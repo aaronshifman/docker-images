@@ -6,7 +6,7 @@ variable "IMAGE" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=hashicorp/vault
-  default = "1.20.3"
+  default = "1.20.4"
 }
 
 
