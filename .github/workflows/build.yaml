@@ -63,7 +63,7 @@ jobs:
             org.opencontainers.image.description=${{ steps.image-settings.outputs.description }}
 
       - name: Store metadata
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           if-no-files-found: error
           name: ${{ inputs.image }}-metadata
@@ -97,7 +97,7 @@ jobs:
           password: ${{ github.token }}
 
       - name: Download Bake Metadata
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: ${{ inputs.image }}-metadata
           path: ${{ runner.temp }}
@@ -137,7 +137,7 @@ jobs:
 
       - name: Upload Digest
         if: ${{ inputs.release }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ inputs.image }}-digests-${{ steps.target.outputs.arch }}
           path: ${{ runner.temp }}/digests/*
@@ -157,13 +157,13 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Download Bake Metadata
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: ${{ inputs.image }}-metadata
           path: ${{ runner.temp }}
 
       - name: Download Digests
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: ${{ runner.temp }}/digests
           pattern: ${{ inputs.image }}-digests-*
