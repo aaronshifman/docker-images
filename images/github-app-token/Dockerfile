@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 RUN pip install --no-cache-dir PyJWT cryptography requests
 ADD generate_token.py /app/generate_token.py
