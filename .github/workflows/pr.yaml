@@ -105,10 +105,21 @@ jobs:
           output-format: table
           output-file: ${{ runner.temp }}/grype-results.txt
 
+      - name: Generate SBOM
+        continue-on-error: true
+        uses: anchore/sbom-action@28d71544de8eaf1b958d335707167c5f783590ad # v0.22.2
+        with:
+          image: localbuild/${{ matrix.image }}:latest
+          format: syft-table
+          output-file: ${{ runner.temp }}/sbom.txt
+          upload-artifact: false
+          dependency-snapshot: false
+
       - name: Format scan results
         if: always()
         run: |
           RESULTS="${{ runner.temp }}/grype-results.txt"
+          SBOM="${{ runner.temp }}/sbom.txt"
           COMMENT="${{ runner.temp }}/grype-comment.md"
           echo "### <img src=\"https://user-images.githubusercontent.com/5199289/136855393-d0a9eef9-ccf1-4e2b-9d7c-7aad16a567e5.png\" width=\"20\" align=\"absmiddle\"/> Grype Scan: \`${{ matrix.image }}\`" > "$COMMENT"
           if [ -f "$RESULTS" ]; then
@@ -117,6 +128,16 @@ jobs:
             echo '```' >> "$COMMENT"
           else
             echo "_Scan failed to produce results — check the workflow logs._" >> "$COMMENT"
+          fi
+          if [ -f "$SBOM" ]; then
+            PKG_COUNT=$(grep -c '.' "$SBOM" || true)
+            echo "" >> "$COMMENT"
+            echo "<details><summary>📦 SBOM — ${PKG_COUNT} packages</summary>" >> "$COMMENT"
+            echo "" >> "$COMMENT"
+            echo '```' >> "$COMMENT"
+            cat "$SBOM" >> "$COMMENT"
+            echo '```' >> "$COMMENT"
+            echo "</details>" >> "$COMMENT"
           fi
           echo "" >> "$COMMENT"
           echo "_Advisory only — does not block merge._" >> "$COMMENT"
