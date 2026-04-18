@@ -7,7 +7,7 @@ WORKDIR /go/terraform
 
 # bump grpc to address GO-2026-4762, 
 # bump go-getter to address CVE-2026-4660
-# otel needs to be bumped to address CVE-2026-39883 but not compatible
+# otel needs to be bumped to address CVE-2026-39883 but not compatible 
 RUN --mount=type=cache,target=/go/pkg/mod \
   go get \
   google.golang.org/grpc@v1.79.3 && \
