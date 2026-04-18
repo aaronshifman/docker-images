@@ -121,7 +121,10 @@ jobs:
           RESULTS="${{ runner.temp }}/grype-results.txt"
           SBOM="${{ runner.temp }}/sbom.txt"
           COMMENT="${{ runner.temp }}/grype-comment.md"
+          IMAGE_SIZE=$(docker images localbuild/${{ matrix.image }}:latest --format "{{.Size}}" 2>/dev/null || echo "unknown")
           echo "### <img src=\"https://user-images.githubusercontent.com/5199289/136855393-d0a9eef9-ccf1-4e2b-9d7c-7aad16a567e5.png\" width=\"20\" align=\"absmiddle\"/> Grype Scan: \`${{ matrix.image }}\`" > "$COMMENT"
+          echo "**Image size:** ${IMAGE_SIZE}" >> "$COMMENT"
+          echo "" >> "$COMMENT"
           if [ -f "$RESULTS" ]; then
             echo '```' >> "$COMMENT"
             cat "$RESULTS" >> "$COMMENT"
