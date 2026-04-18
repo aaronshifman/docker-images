@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+
+name: Docker Login
+description: Login to ghcr.io and optionally dhi.io
+inputs:
+  dhi-username:
+    description: dhi.io username
+    required: false
+    default: ""
+  dhi-token:
+    description: dhi.io token
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
+    - name: Login to dhi.io
+      if: ${{ inputs.dhi-username != '' }}
+      uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+      with:
+        registry: dhi.io
+        username: ${{ inputs.dhi-username }}
+        password: ${{ inputs.dhi-token }}

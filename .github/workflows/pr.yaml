@@ -59,6 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
       pull-requests: write
     strategy:
       matrix:
@@ -76,6 +77,12 @@ jobs:
         with:
           image: ${{ matrix.image }}
 
+      - name: Docker Login
+        uses: ./.github/actions/docker-login
+        with:
+          dhi-username: ${{ secrets.DOCKER_USER }}
+          dhi-token: ${{ secrets.DOCKER_TOKEN }}
+
       - name: Build local image
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
@@ -86,6 +93,8 @@ jobs:
           build-args: |
             VERSION=${{ steps.image-settings.outputs.version }}
             VENDOR=${{ github.repository_owner }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.image }}-amd64,mode=max
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.image }}-amd64,mode=max,compression=zstd,force-compression=true
 
       - name: Scan with Grype
         uses: anchore/scan-action@e1165082ffb1fe366ebaf02d8526e7c4989ea9d2 # v7.4.0
