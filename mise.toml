@@ -1,0 +1,4 @@
+[tools]
+grype = "latest"
+hadolint = "latest"
+syft = "latest"
