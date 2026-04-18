@@ -1,4 +1,4 @@
-FROM dhi.io/golang:1-debian13-dev@sha256:00526a3560b187454be7c16a802c3f257f15afdd7d2427abdbd091f2c6ee6688 AS build
+FROM dhi.io/golang:1-debian13-dev@sha256:39947402d8e52fcaeb8f8a3b00f4377414464fb89437c7ba67358cf4c5caaac9 AS build
 
 ARG VERSION
 
