@@ -6,7 +6,7 @@ variable "IMAGE" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=runatlantis/atlantis
-  default = "0.41.0"
+  default = "0.42.0"
 }
 
 group "default" {
