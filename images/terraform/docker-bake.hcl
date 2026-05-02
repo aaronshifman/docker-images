@@ -6,7 +6,7 @@ variable "IMAGE" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=hashicorp/terraform
-  default = "1.14.8"
+  default = "1.15.1"
 }
 
 group "default" {
