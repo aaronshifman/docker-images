@@ -1,0 +1,15 @@
+[tools]
+neovim = "latest"
+tmux = "latest"
+
+go = "latest"
+python = "latest"
+node = "lts"
+
+ripgrep = "latest"
+fd = "latest"
+fzf = "latest"
+lazygit = "latest"
+
+[settings]
+lockfile = true
