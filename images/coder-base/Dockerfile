@@ -76,15 +76,16 @@ RUN curl -fsSL https://mise.run | MISE_VERSION="v${MISE_VERSION}" MISE_INSTALL_P
 COPY mise.toml /etc/mise/config.toml
 COPY mise.lock /etc/mise/mise.lock
 
-# Install the toolchain (as root, into /opt/mise) pinned by mise.lock, then make
-# it world-readable so the coder user can run it, and wire up shell activation
-# system-wide (login shells via profile.d, interactive shells via bash.bashrc).
+# Install the toolchain (as root, into /opt/mise) pinned by mise.lock, then hand
+# ownership to the coder user so they can `mise use` more tools at runtime
+# without sudo, and wire up shell activation system-wide (login shells via
+# profile.d, interactive shells via bash.bashrc).
 # hadolint ignore=SC2016
 RUN mise install --yes \
   && mise reshim \
   && echo 'eval "$(mise activate bash)"' > /etc/profile.d/mise.sh \
   && echo 'eval "$(mise activate bash)"' >> /etc/bash.bashrc \
-  && chmod -R a+rX /opt/mise /etc/mise
+  && chown -R coder:coder /opt/mise /etc/mise
 
 USER coder
 WORKDIR /home/coder
