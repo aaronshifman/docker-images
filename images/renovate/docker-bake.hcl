@@ -16,7 +16,7 @@ variable "HELM_VERSION" {
 
 variable "KUSTOMIZE_VERSION" {
   // renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/v(?<version>.+)$
-  default = "5.8.1"
+  default = "5.8.3"
 }
 
 group "default" {
