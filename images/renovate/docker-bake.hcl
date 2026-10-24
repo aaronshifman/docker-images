@@ -11,7 +11,7 @@ variable "VERSION" {
 
 variable "HELM_VERSION" {
   // renovate: datasource=github-releases depName=helm/helm extractVersion=^v(?<version>.+)$
-  default = "4.2.1"
+  default = "4.3.1"
 }
 
 variable "KUSTOMIZE_VERSION" {
