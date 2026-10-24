@@ -12,3 +12,4 @@ Decent chunk of GA workflows was stolen from [here](https://github.com/home-oper
 | [github-app-token](https://github.com/aaronshifman/docker-images/pkgs/container/github-app-token) | Generate a github installation token for an app from pemfile      |
 | [apprise-api](https://github.com/aaronshifman/docker-images/pkgs/container/apprise-api)           | Run the apprise api server with a single process in the container |
 | [envsubst](https://github.com/aaronshifman/docker-images/pkgs/container/envsubst)                 | envsubst in a container                                           |
+| [renovate](https://github.com/aaronshifman/docker-images/pkgs/container/renovate)                 | Renovate with with deps      					|

@@ -16,6 +16,9 @@ outputs:
   version:
     description: VERSION from docker bake
     value: ${{ steps.settings.outputs.version }}
+  build-args:
+    description: All build args from docker bake (.target.image.args), one KEY=VALUE per line
+    value: ${{ steps.settings.outputs.build-args }}
 runs:
   using: composite
   steps:
@@ -32,3 +35,8 @@ runs:
         echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
         echo "version=${VERSION}" >> $GITHUB_OUTPUT
         echo "description=${DESCRIPTION}" >> $GITHUB_OUTPUT
+        {
+          echo "build-args<<EOF"
+          docker buildx bake image --print | jq -r '.target.image.args // {} | to_entries[] | "\(.key)=\(.value)"'
+          echo "EOF"
+        } >> $GITHUB_OUTPUT

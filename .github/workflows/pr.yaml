@@ -92,7 +92,7 @@ jobs:
           load: true
           tags: localbuild/${{ matrix.image }}:latest
           build-args: |
-            VERSION=${{ steps.image-settings.outputs.version }}
+            ${{ steps.image-settings.outputs.build-args }}
             VENDOR=${{ github.repository_owner }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.image }}-amd64,mode=max
           cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.image }}-amd64,mode=max,compression=zstd,force-compression=true
@@ -116,20 +116,47 @@ jobs:
           upload-artifact: false
           dependency-snapshot: false
 
+      - name: Upload full scan results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: grype-${{ matrix.image }}
+          path: |
+            ${{ runner.temp }}/grype-results.txt
+            ${{ runner.temp }}/sbom.txt
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Format scan results
         if: always()
         run: |
           RESULTS="${{ runner.temp }}/grype-results.txt"
           SBOM="${{ runner.temp }}/sbom.txt"
           COMMENT="${{ runner.temp }}/grype-comment.md"
+
+          MAX_BYTES=60000
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          remaining() { echo $(( MAX_BYTES - $(wc -c < "$COMMENT") )); }
+
+          append_block() {
+            local file="$1" budget="$2"
+            echo '```' >> "$COMMENT"
+            if [ "$(wc -c < "$file")" -le "$budget" ]; then
+              cat "$file" >> "$COMMENT"
+            else
+              head -c "$budget" "$file" | sed '$d' >> "$COMMENT"
+              echo "... truncated ($(wc -l < "$file") lines total)" >> "$COMMENT"
+            fi
+            echo '```' >> "$COMMENT"
+          }
+
           IMAGE_SIZE=$(docker images localbuild/${{ matrix.image }}:latest --format "{{.Size}}" 2>/dev/null || echo "unknown")
           echo "### <img src=\"https://user-images.githubusercontent.com/5199289/136855393-d0a9eef9-ccf1-4e2b-9d7c-7aad16a567e5.png\" width=\"20\" align=\"absmiddle\"/> Grype Scan: \`${{ matrix.image }}\`" > "$COMMENT"
           echo "**Image size:** ${IMAGE_SIZE}" >> "$COMMENT"
           echo "" >> "$COMMENT"
           if [ -f "$RESULTS" ]; then
-            echo '```' >> "$COMMENT"
-            cat "$RESULTS" >> "$COMMENT"
-            echo '```' >> "$COMMENT"
+            append_block "$RESULTS" $(( $(remaining) - 1000 ))
           else
             echo "_Scan failed to produce results — check the workflow logs._" >> "$COMMENT"
           fi
@@ -138,11 +165,15 @@ jobs:
             echo "" >> "$COMMENT"
             echo "<details><summary>📦 SBOM — ${PKG_COUNT} packages</summary>" >> "$COMMENT"
             echo "" >> "$COMMENT"
-            echo '```' >> "$COMMENT"
-            cat "$SBOM" >> "$COMMENT"
-            echo '```' >> "$COMMENT"
+            if [ "$(remaining)" -gt 2000 ]; then
+              append_block "$SBOM" $(( $(remaining) - 500 ))
+            else
+              echo "_Too large to inline._" >> "$COMMENT"
+            fi
             echo "</details>" >> "$COMMENT"
           fi
+          echo "" >> "$COMMENT"
+          echo "Full results: \`grype-${{ matrix.image }}\` artifact on the [workflow run](${RUN_URL})." >> "$COMMENT"
           echo "" >> "$COMMENT"
           echo "_Advisory only — does not block merge._" >> "$COMMENT"
 
