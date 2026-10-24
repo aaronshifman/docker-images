@@ -92,7 +92,7 @@ jobs:
           load: true
           tags: localbuild/${{ matrix.image }}:latest
           build-args: |
-            VERSION=${{ steps.image-settings.outputs.version }}
+            ${{ steps.image-settings.outputs.build-args }}
             VENDOR=${{ github.repository_owner }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.image }}-amd64,mode=max
           cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build_cache:${{ matrix.image }}-amd64,mode=max,compression=zstd,force-compression=true
