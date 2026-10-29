@@ -21,7 +21,7 @@ variable "KUSTOMIZE_VERSION" {
 
 variable "NODE_VERSION" {
   // renovate: datasource=node-version depName=node
-  default = "24.22.1"
+  default = "26.13.0"
 }
 
 variable "COREPACK_VERSION" {
