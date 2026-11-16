@@ -1,4 +1,4 @@
-FROM ghcr.io/renovatebot/renovate:44.198.3@sha256:bf344aa39d5b592ec728e1db5c3e1d940a5093a89a4598073efcb18d592d121c
+FROM ghcr.io/renovatebot/renovate:44.239.2@sha256:f09d7b204992d3973ff8e5923c3ceca8bd9ecb07a5014a7dccef5aa087e6f789
 
 ARG VERSION
 
