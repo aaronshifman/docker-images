@@ -6,7 +6,7 @@ variable "IMAGE" {
 
 variable "VERSION" {
   // renovate: datasource=docker depName=ghcr.io/renovatebot/renovate
-  default = "44.239.2"
+  default = "44.257.5"
 }
 
 variable "HELM_VERSION" {
