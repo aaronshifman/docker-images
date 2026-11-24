@@ -108,7 +108,7 @@ jobs:
 
       - name: Generate SBOM
         continue-on-error: true
-        uses: anchore/sbom-action@28d71544de8eaf1b958d335707167c5f783590ad # v0.22.2
+        uses: anchore/sbom-action@dfcb83b97731532d72be422cbc51ee64adb6fd56 # v0.24.4
         with:
           image: localbuild/${{ matrix.image }}:latest
           format: syft-table
